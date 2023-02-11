@@ -25,7 +25,7 @@ class HomeScreenState extends State<HomeScreen> {
       setState(() {
         repeatedText = '';
         for (int i = 1; i <= repeatCount!; i++) {
-          repeatedText += "${title!}\n";
+          repeatedText += "$i: ${title!}\n";
         }
       });
     }
@@ -41,6 +41,8 @@ class HomeScreenState extends State<HomeScreen> {
     });
     showSnackBar(context, "Data Removed Successfully!");
   }
+
+  bool isSelected = false;
 
   @override
   Widget build(BuildContext context) {
@@ -151,9 +153,7 @@ class HomeScreenState extends State<HomeScreen> {
                                       child: Padding(
                                         padding: const EdgeInsets.all(5.5),
                                         child: Text(
-                                          repeatedText.isEmpty
-                                              ? "No Data!"
-                                              : "",
+                                          "",
                                           style: TextStyle(
                                               fontSize: 20,
                                               color: Colors.black),
@@ -173,13 +173,25 @@ class HomeScreenState extends State<HomeScreen> {
                                           ),
                                           Align(
                                             alignment: Alignment.topRight,
-                                            child: IconButton(
-                                              onPressed: () {
-                                                copy(repeatedText);
-                                                showSnackBar(context,
-                                                    "Text Copied Successfully!");
-                                              },
-                                              icon: Icon(Icons.copy),
+                                            child: Row(
+                                              children: [
+                                                IconButton(
+                                                  onPressed: () {
+                                                    copy(repeatedText);
+                                                    showSnackBar(context,
+                                                        "Text Copied Successfully!");
+                                                  },
+                                                  icon: Icon(Icons.copy),
+                                                ),
+                                                IconButton(
+                                                  onPressed: () {
+                                                    send(repeatedText);
+                                                    showSnackBar(
+                                                        context, "Sharing");
+                                                  },
+                                                  icon: Icon(Icons.share),
+                                                ),
+                                              ],
                                             ),
                                           ),
                                         ],
