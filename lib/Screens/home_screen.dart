@@ -1,7 +1,6 @@
-import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:text_repeater_app/MediaQuery/mediaquery.dart';
+import '../Constants/constants.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -40,12 +39,7 @@ class HomeScreenState extends State<HomeScreen> {
       repeatCount = null;
       _formKey.currentState!.reset();
     });
-    Fluttertoast.showToast(msg: "Data is Removed!");
-  }
-
-  ///function to copy text
-  _copy(String text) {
-    FlutterClipboard.copy(text);
+    showSnackBar(context, "Data Removed Successfully!");
   }
 
   @override
@@ -146,60 +140,64 @@ class HomeScreenState extends State<HomeScreen> {
                   width: Sizer(context).width,
                   child: Card(
                     child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          repeatedText.isEmpty
-                              ? SizedBox(
-                                  child: Align(
-                                    alignment: Alignment.topLeft,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(5.5),
-                                      child: Text(
-                                        repeatedText.isEmpty ? "No Data!" : "",
-                                        style: TextStyle(
-                                            fontSize: 20, color: Colors.black),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : Column(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          "Repeated text",
-                                          style: TextStyle(fontSize: 20),
-                                        ),
-                                        Align(
-                                          alignment: Alignment.topRight,
-                                          child: IconButton(
-                                            onPressed: () {
-                                              _copy(repeatedText);
-                                              Fluttertoast.showToast(
-                                                msg:
-                                                    "Text Copied Successfully!",
-                                              );
-                                            },
-                                            icon: Icon(Icons.copy),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Align(
+                      child: Padding(
+                        padding: const EdgeInsets.all(5),
+                        child: Column(
+                          children: [
+                            repeatedText.isEmpty
+                                ? SizedBox(
+                                    child: Align(
                                       alignment: Alignment.topLeft,
                                       child: Padding(
                                         padding: const EdgeInsets.all(5.5),
                                         child: Text(
-                                          repeatedText,
-                                          style: TextStyle(fontSize: 20),
+                                          repeatedText.isEmpty
+                                              ? "No Data!"
+                                              : "",
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              color: Colors.black),
                                         ),
                                       ),
                                     ),
-                                  ],
-                                ),
-                        ],
+                                  )
+                                : Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "Repeated text",
+                                            style: TextStyle(fontSize: 20),
+                                          ),
+                                          Align(
+                                            alignment: Alignment.topRight,
+                                            child: IconButton(
+                                              onPressed: () {
+                                                copy(repeatedText);
+                                                showSnackBar(context,
+                                                    "Text Copied Successfully!");
+                                              },
+                                              icon: Icon(Icons.copy),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Align(
+                                        alignment: Alignment.topLeft,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(5.5),
+                                          child: Text(
+                                            repeatedText,
+                                            style: TextStyle(fontSize: 20),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
