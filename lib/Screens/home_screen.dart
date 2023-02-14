@@ -20,12 +20,24 @@ class HomeScreenState extends State<HomeScreen> {
 
   ///function to generateRepeated Text
   void _generateRepeatedText() {
+/*
+  * We Can do this using List.builder
+  ListView.builder(
+  itemCount: repeatCount,
+  itemBuilder: (context, index) {
+    return Text(title);
+  },
+);
+  * We Can do this using List.generate
+  List<String> repeatedTextList = List.generate(repeatCount, (index) => title);
+  String repeatedText = repeatedTextList.join('\n');
+*/
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       setState(() {
         repeatedText = '';
         for (int i = 1; i <= repeatCount!; i++) {
-          repeatedText += "$i: ${title!}\n";
+          repeatedText += "${title!}\n";
         }
       });
     }
@@ -42,8 +54,6 @@ class HomeScreenState extends State<HomeScreen> {
     showSnackBar(context, "Data Removed Successfully!");
   }
 
-  bool isSelected = false;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,60 +67,92 @@ class HomeScreenState extends State<HomeScreen> {
           key: _formKey,
           child: Column(
             children: <Widget>[
+              Align(
+                alignment: Alignment.bottomLeft,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    "Enter Title you want to repeat?",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+              ),
+
               ///1st TextField
               Padding(
                 padding: const EdgeInsets.all(5.5),
                 child: TextFormField(
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.title),
-                    labelText: 'Enter Text',
-                  ),
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter a title';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) => title = value,
-                ),
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      prefixIcon: Icon(Icons.title_outlined),
+                      labelText: 'Enter Text',
+                    ),
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter a title';
+                      } else if (value.length <= 3) {
+                        return "title should be more than 3";
+                      }
+                      return null;
+                    },
+                    onSaved: (value) {
+                      title = value;
+                    }),
               ),
 
-              ///2nd TextField
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              ///2nd text field
+              Column(
                 children: [
-                  Expanded(
-                      flex: 2,
+                  Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
                       child: Text(
                         "How Much Time you want to repeat?",
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      )),
-                  Expanded(
-                    flex: 1,
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.repeat),
-                        labelText: 'Repeat Count',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
                       ),
-                      keyboardType: TextInputType.number,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter repeat count';
-                        }
-                        if (int.tryParse(value) == null) {
-                          return 'Please enter a valid number';
-                        }
-                        return null;
-                      },
-                      onSaved: (value) => repeatCount = int.parse(value!),
                     ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: TextFormField(
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          prefixIcon: Icon(Icons.repeat_outlined),
+                          labelText: 'Repeat Count',
+                        ),
+                        keyboardType: TextInputType.number,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please enter repeat count';
+                          }
+                          if (int.parse(value) == null ||
+                              int.tryParse(value) == null) {
+                            return 'Please enter a valid number';
+                          }
+                          if (int.parse(value) < 1 || int.parse(value) > 5000) {
+                            return "Number should be between (1 To 5,000)";
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          repeatCount = int.parse(value!);
+                        }),
                   ),
                 ],
               ),
-
-              ///Divider
-              Divider(),
 
               ///Action Buttons
               Padding(
@@ -118,22 +160,41 @@ class HomeScreenState extends State<HomeScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        _clearAll();
-                      },
-                      child: Text("Clear All"),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: MaterialButton(
+                          height: Sizer(context).height * 0.05,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          color: Theme.of(context).primaryColor,
+                          textColor: Colors.white,
+                          onPressed: () {
+                            _clearAll();
+                          },
+                          child: Text("Clear All"),
+                        ),
+                      ),
                     ),
-                    ElevatedButton(
-                      onPressed: _generateRepeatedText,
-                      child: Text("Generate"),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: MaterialButton(
+                          height: Sizer(context).height * 0.05,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          color: Theme.of(context).primaryColor,
+                          textColor: Colors.white,
+                          onPressed: _generateRepeatedText,
+                          child: Text("Generate"),
+                        ),
+                      ),
                     ),
                   ],
                 ),
               ),
-
-              ///Divider
-              Divider(),
 
               ///Repeated Text
               Expanded(
@@ -181,7 +242,8 @@ class HomeScreenState extends State<HomeScreen> {
                                                     showSnackBar(context,
                                                         "Text Copied Successfully!");
                                                   },
-                                                  icon: Icon(Icons.copy),
+                                                  icon:
+                                                      Icon(Icons.copy_outlined),
                                                 ),
                                                 IconButton(
                                                   onPressed: () {
@@ -189,7 +251,8 @@ class HomeScreenState extends State<HomeScreen> {
                                                     showSnackBar(
                                                         context, "Sharing");
                                                   },
-                                                  icon: Icon(Icons.share),
+                                                  icon: Icon(
+                                                      Icons.share_outlined),
                                                 ),
                                               ],
                                             ),

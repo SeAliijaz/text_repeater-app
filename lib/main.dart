@@ -23,9 +23,7 @@ class MyApp extends StatelessWidget {
         ///setting color
         primaryColor: Colors.teal,
         primarySwatch: Colors.teal,
-
-        appBarTheme: AppBarTheme(color: Colors.teal),
-        buttonColor: Colors.teal,
+        appBarTheme: const AppBarTheme(color: Colors.teal),
 
         ///Default Text Theme
         textTheme: GoogleFonts.firaSansTextTheme(

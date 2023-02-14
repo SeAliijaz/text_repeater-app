@@ -16,7 +16,7 @@ void showSnackBar(BuildContext context, String text) {
   final snackBar = SnackBar(
     content: Text(text),
     action: SnackBarAction(
-      label: 'dismiss',
+      label: 'Dismiss',
       onPressed: () {},
     ),
   );
