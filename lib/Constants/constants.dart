@@ -1,24 +1,16 @@
 import 'package:clipboard/clipboard.dart';
-import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:share_plus/share_plus.dart';
 
 ///function to copy text
-copy(String text) {
-  FlutterClipboard.copy(text);
+void copy(String? text) {
+  FlutterClipboard.copy(text == null ? text ?? "Null Text" : "Text");
 }
 
-send(String text) {
-  Share.share(text);
+void send(String? text) {
+  Share.share(text == null ? text ?? "Null Text" : "Text");
 }
 
-///Snackbar
-void showSnackBar(BuildContext context, String text) {
-  final snackBar = SnackBar(
-    content: Text(text),
-    action: SnackBarAction(
-      label: 'Dismiss',
-      onPressed: () {},
-    ),
-  );
-  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+void showToast(String? text) {
+  Fluttertoast.showToast(msg: text == null ? text ?? "Null Text" : "Text");
 }
