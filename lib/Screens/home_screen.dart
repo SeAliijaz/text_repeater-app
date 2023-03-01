@@ -17,29 +17,26 @@ class HomeScreenState extends State<HomeScreen> {
   String? title;
   int? repeatCount;
   String repeatedText = "";
+  bool _isVertical = false;
 
   ///function to generateRepeated Text
   void _generateRepeatedText() {
-/*
-  * We Can do this using List.builder
-  ListView.builder(
-  itemCount: repeatCount,
-  itemBuilder: (context, index) {
-    return Text(title);
-  },
-);
-  * We Can do this using List.generate
-  List<String> repeatedTextList = List.generate(repeatCount, (index) => title);
-  String repeatedText = repeatedTextList.join('\n');
-*/
+    repeatedText = '';
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      setState(() {
-        repeatedText = '';
-        for (int i = 1; i <= repeatCount!; i++) {
-          repeatedText += "${title!}\n";
-        }
-      });
+      if (_isVertical) {
+        setState(() {
+          for (int i = 1; i <= repeatCount!; i++) {
+            repeatedText += "${title!}\n";
+          }
+        });
+      } else {
+        setState(() {
+          for (int i = 1; i <= repeatCount!; i++) {
+            repeatedText += " ${title!.trim()}";
+          }
+        });
+      }
     }
   }
 
@@ -52,6 +49,14 @@ class HomeScreenState extends State<HomeScreen> {
       _formKey.currentState!.reset();
     });
     showSnackBar(context, "Data Removed Successfully!");
+  }
+
+  ///CheckBox
+  ///Vertical & Horizontal Direction
+  _toggleDirection(bool value) {
+    setState(() {
+      _isVertical = value;
+    });
   }
 
   @override
@@ -67,10 +72,10 @@ class HomeScreenState extends State<HomeScreen> {
           key: _formKey,
           child: Column(
             children: <Widget>[
-              Align(
+              const Align(
                 alignment: Alignment.bottomLeft,
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: EdgeInsets.all(8.0),
                   child: Text(
                     "Enter Title you want to repeat?",
                     textAlign: TextAlign.center,
@@ -90,16 +95,15 @@ class HomeScreenState extends State<HomeScreen> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      prefixIcon: Icon(Icons.title_outlined),
+                      prefixIcon: const Icon(Icons.title_outlined),
                       labelText: 'Enter Text',
                     ),
                     validator: (value) {
                       if (value!.isEmpty) {
                         return 'Please enter a title';
-                      } else if (value.length <= 3) {
-                        return "title should be more than 3";
+                      } else {
+                        return null;
                       }
-                      return null;
                     },
                     onSaved: (value) {
                       title = value;
@@ -109,10 +113,10 @@ class HomeScreenState extends State<HomeScreen> {
               ///2nd text field
               Column(
                 children: [
-                  Align(
+                  const Align(
                     alignment: Alignment.bottomLeft,
                     child: Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: EdgeInsets.all(8.0),
                       child: Text(
                         "How Much Time you want to repeat?",
                         textAlign: TextAlign.center,
@@ -130,7 +134,7 @@ class HomeScreenState extends State<HomeScreen> {
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          prefixIcon: Icon(Icons.repeat_outlined),
+                          prefixIcon: const Icon(Icons.repeat_outlined),
                           labelText: 'Repeat Count',
                         ),
                         keyboardType: TextInputType.number,
@@ -138,8 +142,7 @@ class HomeScreenState extends State<HomeScreen> {
                           if (value!.isEmpty) {
                             return 'Please enter repeat count';
                           }
-                          if (int.parse(value) == null ||
-                              int.tryParse(value) == null) {
+                          if (int.tryParse(value) == null) {
                             return 'Please enter a valid number';
                           }
                           if (int.parse(value) < 1 || int.parse(value) > 5000) {
@@ -150,6 +153,29 @@ class HomeScreenState extends State<HomeScreen> {
                         onSaved: (value) {
                           repeatCount = int.parse(value!);
                         }),
+                  ),
+
+                  ///Sizedbox
+                  const SizedBox(height: 10),
+
+                  ///Check Box
+                  Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: CheckboxListTile(
+                          title: Text(
+                            _isVertical == true ? "Vertical" : "Horizontal",
+                          ),
+                          tristate: true,
+                          value: _isVertical,
+                          onChanged: (value) {
+                            _toggleDirection(value!);
+                          }),
+                    ),
                   ),
                 ],
               ),
@@ -170,10 +196,8 @@ class HomeScreenState extends State<HomeScreen> {
                           ),
                           color: Theme.of(context).primaryColor,
                           textColor: Colors.white,
-                          onPressed: () {
-                            _clearAll();
-                          },
-                          child: Text("Clear All"),
+                          onPressed: _clearAll,
+                          child: const Text("Clear All"),
                         ),
                       ),
                     ),
@@ -188,7 +212,7 @@ class HomeScreenState extends State<HomeScreen> {
                           color: Theme.of(context).primaryColor,
                           textColor: Colors.white,
                           onPressed: _generateRepeatedText,
-                          child: Text("Generate"),
+                          child: const Text("Generate"),
                         ),
                       ),
                     ),
@@ -208,11 +232,11 @@ class HomeScreenState extends State<HomeScreen> {
                         child: Column(
                           children: [
                             repeatedText.isEmpty
-                                ? SizedBox(
+                                ? const SizedBox(
                                     child: Align(
                                       alignment: Alignment.topLeft,
                                       child: Padding(
-                                        padding: const EdgeInsets.all(5.5),
+                                        padding: EdgeInsets.all(5.5),
                                         child: Text(
                                           "",
                                           style: TextStyle(
@@ -228,7 +252,7 @@ class HomeScreenState extends State<HomeScreen> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Text(
+                                          const Text(
                                             "Repeated text",
                                             style: TextStyle(fontSize: 20),
                                           ),
@@ -242,8 +266,8 @@ class HomeScreenState extends State<HomeScreen> {
                                                     showSnackBar(context,
                                                         "Text Copied Successfully!");
                                                   },
-                                                  icon:
-                                                      Icon(Icons.copy_outlined),
+                                                  icon: const Icon(
+                                                      Icons.copy_outlined),
                                                 ),
                                                 IconButton(
                                                   onPressed: () {
@@ -251,7 +275,7 @@ class HomeScreenState extends State<HomeScreen> {
                                                     showSnackBar(
                                                         context, "Sharing");
                                                   },
-                                                  icon: Icon(
+                                                  icon: const Icon(
                                                       Icons.share_outlined),
                                                 ),
                                               ],
@@ -265,7 +289,8 @@ class HomeScreenState extends State<HomeScreen> {
                                           padding: const EdgeInsets.all(5.5),
                                           child: Text(
                                             repeatedText,
-                                            style: TextStyle(fontSize: 20),
+                                            style:
+                                                const TextStyle(fontSize: 20),
                                           ),
                                         ),
                                       ),
