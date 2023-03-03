@@ -48,6 +48,7 @@ class HomeScreenState extends State<HomeScreen> {
       title = '';
       repeatCount = null;
       _formKey.currentState!.reset();
+      _isVertical = false;
     });
     showToast("Data Removed!");
   }

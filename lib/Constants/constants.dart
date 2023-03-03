@@ -4,13 +4,13 @@ import 'package:share_plus/share_plus.dart';
 
 ///function to copy text
 void copy(String? text) {
-  FlutterClipboard.copy(text == null ? text ?? "Null Text" : "Text");
+  FlutterClipboard.copy(text ?? "text");
 }
 
 void send(String? text) {
-  Share.share(text == null ? text ?? "Null Text" : "Text");
+  Share.share(text ?? "text");
 }
 
 void showToast(String? text) {
-  Fluttertoast.showToast(msg: text == null ? text ?? "Null Text" : "Text");
+  Fluttertoast.showToast(msg: text ?? "text");
 }
