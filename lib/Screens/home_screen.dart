@@ -3,7 +3,7 @@ import 'package:text_repeater_app/MediaQuery/mediaquery.dart';
 import '../Constants/constants.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   HomeScreenState createState() {
@@ -12,7 +12,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class HomeScreenState extends State<HomeScreen> {
-  ///Vars
   final _formKey = GlobalKey<FormState>();
   String? title;
   int? repeatCount;
@@ -20,7 +19,6 @@ class HomeScreenState extends State<HomeScreen> {
   bool _isVertical = false;
   bool isLoading = false;
 
-  ///function to generateRepeated Text
   void _generateRepeatedText() {
     repeatedText = '';
     if (_formKey.currentState!.validate()) {
@@ -41,7 +39,6 @@ class HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  ///This will clear everyhting on screen
   void _clearAll() {
     setState(() {
       repeatedText = '';
@@ -53,8 +50,6 @@ class HomeScreenState extends State<HomeScreen> {
     showToast("Data Removed!");
   }
 
-  ///CheckBox
-  ///Vertical & Horizontal Direction
   _toggleDirection(bool value) {
     setState(() {
       _isVertical = value;
@@ -71,150 +66,142 @@ class HomeScreenState extends State<HomeScreen> {
           ? const Center(
               child: CircularProgressIndicator(),
             )
-
-          ///Body SizedBox (DIV)
-          : SizedBox(
-              height: Sizer(context).height,
-              width: Sizer(context).width,
-
-              ///Form
-              child: Form(
-                ///Form Key
-                key: _formKey,
-
-                ///Text Fields
-                child: Column(
-                  children: <Widget>[
-                    const Align(
-                      alignment: Alignment.bottomLeft,
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          "Enter Title you want to repeat?",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15,
-                          ),
+          : LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints:
+                        BoxConstraints(minHeight: constraints.maxHeight),
+                    child: IntrinsicHeight(
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          children: <Widget>[
+                            const Align(
+                              alignment: Alignment.bottomLeft,
+                              child: Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text(
+                                  "Enter Title you want to repeat?",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.all(5.5),
+                              child: TextFormField(
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  prefixIcon: const Icon(Icons.title_outlined),
+                                  labelText: 'Enter Text',
+                                ),
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return 'Please enter a title';
+                                  } else {
+                                    return null;
+                                  }
+                                },
+                                onSaved: (value) {
+                                  title = value;
+                                },
+                              ),
+                            ),
+                            Column(
+                              children: [
+                                const Align(
+                                  alignment: Alignment.bottomLeft,
+                                  child: Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: Text(
+                                      "How Much Time you want to repeat?",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(5.0),
+                                  child: TextFormField(
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      prefixIcon:
+                                          const Icon(Icons.repeat_outlined),
+                                      labelText: 'Repeat Count',
+                                    ),
+                                    keyboardType: TextInputType.number,
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return 'Please enter repeat count';
+                                      }
+                                      if (int.tryParse(value) == null) {
+                                        return 'Please enter a valid number';
+                                      }
+                                      if (int.parse(value) < 1 ||
+                                          int.parse(value) > 5000) {
+                                        return "Number should be between (1 To 5,000)";
+                                      }
+                                      return null;
+                                    },
+                                    onSaved: (value) {
+                                      repeatCount = int.parse(value!);
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                Padding(
+                                  padding: EdgeInsets.all(5.0),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.grey),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: CheckboxListTile(
+                                      title: Text(
+                                        _isVertical == true
+                                            ? "Vertical"
+                                            : "Horizontal",
+                                      ),
+                                      value: _isVertical,
+                                      onChanged: (bool? value) {
+                                        if (value != null) {
+                                          _toggleDirection(value);
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            _actionButtons(context),
+                            _repeatedTextDiv(context, constraints),
+                          ],
                         ),
                       ),
                     ),
-
-                    ///1st TextField
-                    Padding(
-                      padding: const EdgeInsets.all(5.5),
-                      child: TextFormField(
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            prefixIcon: const Icon(Icons.title_outlined),
-                            labelText: 'Enter Text',
-                          ),
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return 'Please enter a title';
-                            } else {
-                              return null;
-                            }
-                          },
-                          onSaved: (value) {
-                            title = value;
-                          }),
-                    ),
-
-                    ///2nd text field
-                    Column(
-                      children: [
-                        const Align(
-                          alignment: Alignment.bottomLeft,
-                          child: Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Text(
-                              "How Much Time you want to repeat?",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: TextFormField(
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                prefixIcon: const Icon(Icons.repeat_outlined),
-                                labelText: 'Repeat Count',
-                              ),
-                              keyboardType: TextInputType.number,
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return 'Please enter repeat count';
-                                }
-                                if (int.tryParse(value) == null) {
-                                  return 'Please enter a valid number';
-                                }
-                                if (int.parse(value) < 1 ||
-                                    int.parse(value) > 5000) {
-                                  return "Number should be between (1 To 5,000)";
-                                }
-                                return null;
-                              },
-                              onSaved: (value) {
-                                repeatCount = int.parse(value!);
-                              }),
-                        ),
-
-                        ///Sizedbox
-                        const SizedBox(height: 10),
-
-                        ///Check Box
-                        Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: CheckboxListTile(
-                                title: Text(
-                                  _isVertical == true
-                                      ? "Vertical"
-                                      : "Horizontal",
-                                ),
-                                value: _isVertical,
-                                onChanged: (bool? value) {
-                                  if (value != null) {
-                                    _toggleDirection(value);
-                                  }
-                                }),
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    ///Action Buttons
-                    _actionButtons(context),
-
-                    ///Repeated Text
-                    _repeatedTextDiv(context),
-                  ],
-                ),
-              ),
+                  ),
+                );
+              },
             ),
     );
   }
 
-  ///Repeated Text Container (Div)
-  Widget _repeatedTextDiv(BuildContext context) {
+  Widget _repeatedTextDiv(BuildContext context, BoxConstraints constraints) {
     return Expanded(
       child: SizedBox(
-        height: Sizer(context).height,
-        width: Sizer(context).width,
+        height: constraints.maxHeight,
+        width: double.infinity,
         child: Card(
           child: SingleChildScrollView(
             child: Padding(
@@ -222,7 +209,7 @@ class HomeScreenState extends State<HomeScreen> {
               child: Column(
                 children: [
                   if (repeatedText.isEmpty)
-                    const SizedBox(
+                    SizedBox(
                       child: Align(
                         alignment: Alignment.topLeft,
                         child: Padding(
@@ -291,9 +278,6 @@ class HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  ///Action Button
-  /// 1. Clear All Button
-  /// 2. Generate Text Button
   Widget _actionButtons(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(5.5),
